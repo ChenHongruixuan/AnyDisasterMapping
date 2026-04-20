@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "any_disaster"
+version = "0.0.1"
+
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = [
+    "numpy==1.26.4",
+    "torch",
+    "torchvision",
+    "albumentations==1.4.24",
+    "pyyaml",
+    "tqdm",
+    "imageio",
+    "tifffile",
+    "imagecodecs",
+    "scikit-image",
+    "matplotlib",
+    "rasterio",
+    "termcolor",
+    "prettytable",
+    "safetensors",
+    "yacs",          # for HRNet config
+    "timm",          # for SegFormer, SatMAE, etc.
+    "h5py",          # for Landslide4Sense, FireSpread
+    "hdf5plugin",    # for FLOGA
+    "scikit-learn",  # for FLOGA
+    "einops",        # for ChangeMamba
+    "fvcore",        # for ChangeMamba
+    "tensorboardX",  # for logging
+    # foundation model dependencies (optional, needed for specific models)
+    "transformers==4.57.0",  # for Mask2Former, CLIPDPT, SAMDPT; 5.x has breaking changes
+    "peft",          # for DINOV2DPT_LoRA
+    "hydra-core",    # for SAM2
+    "pandas",
+    # data setup
+    "Pillow",
+    "huggingface_hub>=0.34,<1",     # for the UrbanSARFloods download helper; transformers 4.x requires <1
+    "opencv-python-headless",
+    "shapely",              # for xBD polygon masks
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]

@@ -1,0 +1,78 @@
+task: seg
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: mask2former
+  kwargs:
+    in_channels: 5
+    num_classes: 2
+    backbone: facebook/mask2former-swin-base-ade-semantic
+    pretrained_backbone: true
+model_has_builtin_loss: true
+dataset:
+  name: cau_flood
+  train:
+    dataset_path: data/flood/CAU_Flood
+    data_list_path: data/flood/CAU_Flood/train.txt
+    split: train
+  val:
+    dataset_path: data/flood/CAU_Flood
+    data_list_path: data/flood/CAU_Flood/validation.txt
+    split: val
+  test:
+    dataset_path: data/flood/CAU_Flood
+    data_list_path: data/flood/CAU_Flood/test.txt
+    split: test
+augmentation:
+  train:
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    RandomCrop:
+      height: 256
+      width: 256
+    Normalize:
+      mean: &id001
+      - 0.485
+      - 0.456
+      - 0.406
+      - 0.45
+      - 0.5
+      std: &id002
+      - 0.229
+      - 0.224
+      - 0.225
+      - 0.22
+      - 0.25
+      max_pixel_value: 255.0
+  val:
+    CenterCrop:
+      height: 256
+      width: 256
+    Normalize:
+      mean: *id001
+      std: *id002
+      max_pixel_value: 255.0
+optimizer:
+  name: AdamW
+  learning_rate: 5.0e-05
+  weight_decay: 0.005
+scheduler:
+  name: CosineAnnealingLR
+  step_mode: epoch
+  kwargs:
+    T_max: 100
+loss:
+  use_lovasz: false
+  lovasz_weight: 0.75
+training:
+  num_epochs: 100
+  train_batch_size: 16
+  eval_batch_size: 1
+  num_workers: 4
+  metric_for_best_model: mIoU
+output_dir: ./results/flood/cau/seg_mask2former

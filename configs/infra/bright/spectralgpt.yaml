@@ -1,0 +1,81 @@
+task: cd
+num_classes: 4
+ignore_index: 255
+seed: 42
+model:
+  name: spectralgpt
+  kwargs:
+    num_frames: 6
+    num_classes: 4
+    img_size: 128
+    decoder_channels: 256
+    pretrained_backbone_path: pretrained_weight/SpectralGPT+.pth
+dataset:
+  name: bright
+  train:
+    dataset_path: data/infra_damage/bright
+    data_list_path: data/infra_damage/bright/train_set.txt
+    crop_size: 128
+    split: train
+  val:
+    dataset_path: data/infra_damage/bright
+    data_list_path: data/infra_damage/bright/val_set.txt
+    crop_size: null
+    split: val
+  test:
+    dataset_path: data/infra_damage/bright
+    data_list_path: data/infra_damage/bright/test_set.txt
+    crop_size: null
+    split: test
+augmentation:
+  train:
+    SmartCrop:
+      crop_size: 128
+      cat_max_ratio: 0.75
+      max_retry: 50
+      ignore_index: 255
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    Normalize:
+      mean:
+      - 123.675
+      - 116.28
+      - 103.53
+      std:
+      - 58.395
+      - 57.12
+      - 57.375
+      max_pixel_value: 1.0
+  val:
+    Normalize:
+      mean:
+      - 123.675
+      - 116.28
+      - 103.53
+      std:
+      - 58.395
+      - 57.12
+      - 57.375
+      max_pixel_value: 1.0
+optimizer:
+  name: AdamW
+  learning_rate: 5.0e-06
+  weight_decay: 0.01
+scheduler:
+  name: null
+loss:
+  use_lovasz: true
+  lovasz_weight: 0.75
+training:
+  num_epochs: 450
+  train_batch_size: 32
+  eval_batch_size: 4
+  num_workers: 32
+output_dir: ./results/bright/spectralgpt
+inference:
+  sliding_kernel: 128
+  sliding_stride: 64

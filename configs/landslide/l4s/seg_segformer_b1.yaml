@@ -1,0 +1,47 @@
+task: seg
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: segformer
+  kwargs:
+    backbone: mit_b1
+    num_classes: 2
+    embedding_dim: 256
+    pretrained_weight: pretrained_weight/mit_b1.pth
+    in_channels: 14
+dataset:
+  name: l4s
+  train:
+    dataset_path: data/landslides/Landslide4Sense
+    data_list_path: data/landslides/Landslide4Sense/train.txt
+    crop_size: null
+    split: train
+  val:
+    dataset_path: data/landslides/Landslide4Sense
+    data_list_path: data/landslides/Landslide4Sense/val.txt
+    crop_size: null
+    split: val
+  test:
+    dataset_path: data/landslides/Landslide4Sense
+    data_list_path: data/landslides/Landslide4Sense/test.txt
+    crop_size: null
+    split: test
+augmentation:
+  train: {}
+  val: {}
+optimizer:
+  name: AdamW
+  learning_rate: 0.0005
+  weight_decay: 0.0001
+scheduler:
+  name: StepLR
+  step_size: 2000
+  gamma: 0.8
+training:
+  num_epochs: 150
+  train_batch_size: 32
+  eval_batch_size: 32
+  num_workers: 16
+  eval_interval: 300
+output_dir: ./results/l4s/seg_segformer_b1

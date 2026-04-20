@@ -1,0 +1,45 @@
+task: seg
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: spectralgpt
+  kwargs:
+    num_frames: 4
+    num_classes: 2
+    img_size: 128
+    decoder_channels: 256
+    pretrained_backbone: true
+    pretrained_backbone_path: pretrained_weight/SpectralGPT+.pth
+dataset:
+  name: hrgldd
+  train:
+    data_npy_path: data/landslides/HR_GLDD/trainX.npy
+    label_npy_path: data/landslides/HR_GLDD/trainY.npy
+    split: train
+  val:
+    data_npy_path: data/landslides/HR_GLDD/valX.npy
+    label_npy_path: data/landslides/HR_GLDD/valY.npy
+    split: val
+  test:
+    data_npy_path: data/landslides/HR_GLDD/testX.npy
+    label_npy_path: data/landslides/HR_GLDD/testY.npy
+    split: test
+augmentation:
+  train: {}
+  val: {}
+optimizer:
+  name: AdamW
+  learning_rate: 5.0e-05
+  weight_decay: 0.05
+scheduler:
+  name: StepLR
+  step_size: 500
+  gamma: 0.8
+training:
+  num_epochs: 300
+  train_batch_size: 16
+  eval_batch_size: 16
+  num_workers: 16
+  eval_interval: 300
+output_dir: ./results/hrgldd/seg_spectralgpt

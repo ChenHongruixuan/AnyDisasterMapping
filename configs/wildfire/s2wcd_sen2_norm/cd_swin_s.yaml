@@ -1,0 +1,126 @@
+task: cd
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: swinupernet
+  kwargs:
+    backbone: swin_small
+    in_channels: 26
+    num_classes: 2
+    img_size: 512
+dataset:
+  name: s2_wcd
+  train:
+    dataset_path: data/wildfire/s2_wcd
+    data_list_path: data/wildfire/s2_wcd/train.txt
+    data_type: sen2
+    split: train
+  val:
+    dataset_path: data/wildfire/s2_wcd
+    data_list_path: data/wildfire/s2_wcd/val.txt
+    data_type: sen2
+    split: val
+  test:
+    dataset_path: data/wildfire/s2_wcd
+    data_list_path: data/wildfire/s2_wcd/test.txt
+    data_type: sen2
+    split: test
+augmentation:
+  train:
+    PadIfNeeded:
+      min_height: 512
+      min_width: 512
+      border_mode: 0
+      value: 0
+      p: 1.0
+    RandomCrop:
+      height: 512
+      width: 512
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    Normalize: &id001
+      mean:
+      - 1963.1643
+      - 1763.0301
+      - 1699.6967
+      - 1681.045
+      - 1903.2436
+      - 2539.5453
+      - 2846.0701
+      - 2814.4286
+      - 3092.8473
+      - 1397.3814
+      - 756.4017
+      - 2746.9604
+      - 2009.2057
+      - 1963.1643
+      - 1763.0301
+      - 1699.6967
+      - 1681.045
+      - 1903.2436
+      - 2539.5453
+      - 2846.0701
+      - 2814.4286
+      - 3092.8473
+      - 1397.3814
+      - 756.4017
+      - 2746.9604
+      - 2009.2057
+      std:
+      - 465.8715
+      - 464.624
+      - 501.2931
+      - 620.3948
+      - 597.188
+      - 728.4826
+      - 855.3011
+      - 872.9006
+      - 935.5012
+      - 523.5787
+      - 436.2532
+      - 894.8218
+      - 739.5428
+      - 465.8715
+      - 464.624
+      - 501.2931
+      - 620.3948
+      - 597.188
+      - 728.4826
+      - 855.3011
+      - 872.9006
+      - 935.5012
+      - 523.5787
+      - 436.2532
+      - 894.8218
+      - 739.5428
+      max_pixel_value: 0.0001
+  val:
+    Normalize: *id001
+optimizer:
+  name: AdamW
+  learning_rate: 0.0001
+  enc_lr_weight: 0.1
+scheduler:
+  name: WarmUpPolyLR
+  kwargs:
+    lr_power: 0.9
+  step_mode: iteration
+loss:
+  use_dice: true
+  dice_weight: 1.0
+training:
+  num_epochs: 100
+  train_batch_size: 16
+  eval_batch_size: 1
+  num_workers: 16
+  metric_for_best_model: IoU_1
+  dataloader_drop_last: true
+output_dir: ./results/wildfire/s2wcd_sen2_norm/cd_swin_s
+inference:
+  sliding_kernel: 512
+  sliding_stride: 256

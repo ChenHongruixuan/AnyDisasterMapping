@@ -1,0 +1,106 @@
+task: cd
+num_classes: 3
+ignore_index: 255
+seed: 42
+model:
+  name: bit
+  kwargs:
+    input_nc: 4
+    output_nc: 3
+    with_pos: learned
+    backbone: resnet50
+    siamese_mode: pseudo
+dataset:
+  name: urbansar
+  input:
+    channel_router:
+      pre_channels:
+      - 0
+      - 1
+      - 4
+      - 5
+      post_channels:
+      - 2
+      - 3
+      - 6
+      - 7
+  train:
+    dataset_path: data/flood/UrbanSARFloods
+    data_list_path: data/flood/UrbanSARFloods/train.txt
+    split: train
+  val:
+    dataset_path: data/flood/UrbanSARFloods
+    data_list_path: data/flood/UrbanSARFloods/validation.txt
+    split: val
+  test:
+    dataset_path: data/flood/UrbanSARFloods
+    data_list_path: data/flood/UrbanSARFloods/test_jubba.txt
+    split: test
+augmentation:
+  train:
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    RandomCrop:
+      height: 256
+      width: 256
+    Normalize:
+      pre:
+        mean: &id001
+        - 0.2365
+        - 0.3176
+        - -14.5788
+        - -8.6098
+        std: &id002
+        - 0.1628
+        - 0.2085
+        - 4.0714
+        - 3.9477
+        max_pixel_value: 1.0
+      post:
+        mean: &id003
+        - 0.1851
+        - 0.269
+        - -14.2907
+        - -8.3353
+        std: &id004
+        - 0.1401
+        - 0.1977
+        - 4.2101
+        - 4.0549
+        max_pixel_value: 1.0
+  val:
+    CenterCrop:
+      height: 256
+      width: 256
+    Normalize:
+      pre:
+        mean: *id001
+        std: *id002
+        max_pixel_value: 1.0
+      post:
+        mean: *id003
+        std: *id004
+        max_pixel_value: 1.0
+optimizer:
+  name: AdamW
+  learning_rate: 0.0001
+  weight_decay: 0.005
+scheduler:
+  name: CosineAnnealingLR
+  step_mode: epoch
+  kwargs:
+    T_max: 100
+loss:
+  use_lovasz: false
+  lovasz_weight: 0.75
+training:
+  num_epochs: 100
+  train_batch_size: 16
+  eval_batch_size: 1
+  num_workers: 4
+  metric_for_best_model: mIoU
+output_dir: ./results/flood/urbansar/cd_bit

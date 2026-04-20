@@ -1,0 +1,45 @@
+task: seg
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: sam2fpn
+  kwargs:
+    in_channels: 4
+    num_classes: 2
+    config_file: src/models/sam2/configs/sam2.1_hiera_s.yaml
+    checkpoint: pretrained_weight/sam2.1_hiera_small.pt
+    decoder_type: fpn
+    patch_embed_init: copy_ch0
+dataset:
+  name: hrgldd
+  train:
+    data_npy_path: data/landslides/HR_GLDD/trainX.npy
+    label_npy_path: data/landslides/HR_GLDD/trainY.npy
+    split: train
+  val:
+    data_npy_path: data/landslides/HR_GLDD/valX.npy
+    label_npy_path: data/landslides/HR_GLDD/valY.npy
+    split: val
+  test:
+    data_npy_path: data/landslides/HR_GLDD/testX.npy
+    label_npy_path: data/landslides/HR_GLDD/testY.npy
+    split: test
+augmentation:
+  train: {}
+  val: {}
+optimizer:
+  name: AdamW
+  learning_rate: 0.0005
+  weight_decay: 0.0001
+scheduler:
+  name: StepLR
+  step_size: 2000
+  gamma: 0.8
+training:
+  num_epochs: 300
+  train_batch_size: 32
+  eval_batch_size: 32
+  num_workers: 16
+  eval_interval: 300
+output_dir: ./results/hrgldd/seg_sam2fpn_hiera_s

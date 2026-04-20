@@ -1,0 +1,57 @@
+task: seg
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: sam2fpn
+  kwargs:
+    in_channels: 200
+    num_classes: 2
+    config_file: src/models/sam2/configs/sam2.1_hiera_b+.yaml
+    checkpoint: pretrained_weight/sam2.1_hiera_base_plus.pt
+    decoder_type: fpn
+dataset:
+  name: fire_spread
+  train:
+    dataset_path: data/wildfire/fire_spread
+    data_list_path: data/wildfire/fire_spread/train.txt
+    n_leading_observations: 5
+    crop_side_length: 128
+    split: train
+  val:
+    dataset_path: data/wildfire/fire_spread
+    data_list_path: data/wildfire/fire_spread/val.txt
+    n_leading_observations: 5
+    n_leading_observations_test_adjustment: 5
+    crop_side_length: 128
+    split: val
+  test:
+    dataset_path: data/wildfire/fire_spread
+    data_list_path: data/wildfire/fire_spread/test.txt
+    n_leading_observations: 5
+    n_leading_observations_test_adjustment: 5
+    crop_side_length: 128
+    split: test
+optimizer:
+  name: AdamW
+  learning_rate: 0.0001
+  enc_lr_weight: 0.1
+scheduler:
+  name: WarmUpPolyLR
+  kwargs:
+    lr_power: 0.9
+  step_mode: iteration
+loss:
+  use_dice: true
+  dice_weight: 1.0
+training:
+  num_epochs: 100
+  train_batch_size: 4
+  eval_batch_size: 1
+  num_workers: 16
+  metric_for_best_model: IoU_1
+  dataloader_drop_last: true
+output_dir: ./results/wildfire/fire_spread_obv5/seg_sam2_fpn_bplus
+inference:
+  sliding_kernel: 128
+  sliding_stride: 64

@@ -1,0 +1,113 @@
+task: cd
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: dinov3dpt
+  kwargs:
+    backbone: dinov3_vitb16
+    torchhub_repo: src/models/dinov3
+    torchhub_weights: pretrained_weight/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth
+    in_channels: 18
+    num_classes: 2
+dataset:
+  name: floga
+  train:
+    dataset_path: data/wildfire/floga
+    data_list_path: data/wildfire/floga/patch256/train.txt
+    data_type: sen2
+    patch_size: 256
+    split: train
+  val:
+    dataset_path: data/wildfire/floga
+    data_list_path: data/wildfire/floga/patch256/val.txt
+    data_type: sen2
+    patch_size: 256
+    split: val
+  test:
+    dataset_path: data/wildfire/floga
+    data_list_path: data/wildfire/floga/patch256/test.txt
+    data_type: sen2
+    patch_size: 256
+    split: test
+augmentation:
+  train:
+    PadIfNeeded:
+      min_height: 256
+      min_width: 256
+      border_mode: 0
+      value: 0
+      p: 1.0
+    RandomCrop:
+      height: 256
+      width: 256
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    Normalize: &id001
+      mean:
+      - 63.8612
+      - 73.003
+      - 78.0166
+      - 100.7361
+      - 137.4804
+      - 151.7485
+      - 144.9945
+      - 105.9401
+      - 162.0981
+      - 63.8612
+      - 73.003
+      - 78.0166
+      - 100.7361
+      - 137.4804
+      - 151.7485
+      - 144.9945
+      - 105.9401
+      - 162.0981
+      std:
+      - 288.5572
+      - 318.7534
+      - 354.1387
+      - 430.6897
+      - 573.3617
+      - 634.2242
+      - 614.6827
+      - 454.1967
+      - 680.0145
+      - 288.5572
+      - 318.7534
+      - 354.1387
+      - 430.6897
+      - 573.3617
+      - 634.2242
+      - 614.6827
+      - 454.1967
+      - 680.0145
+      max_pixel_value: 0.0001
+  val:
+    Normalize: *id001
+optimizer:
+  name: AdamW
+  learning_rate: 0.0001
+  enc_lr_weight: 0.1
+scheduler:
+  name: WarmUpPolyLR
+  kwargs:
+    lr_power: 0.9
+  step_mode: iteration
+loss:
+  use_dice: true
+  dice_weight: 1.0
+training:
+  num_epochs: 100
+  train_batch_size: 8
+  eval_batch_size: 1
+  num_workers: 16
+  metric_for_best_model: IoU_1
+output_dir: ./results/wildfire/floga_sen2_norm/cd_dinov3_dpt_vitb_lvd
+inference:
+  sliding_kernel: 256
+  sliding_stride: 128

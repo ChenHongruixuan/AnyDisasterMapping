@@ -1,0 +1,53 @@
+task: seg
+num_classes: 2
+ignore_index: 255
+seed: 42
+model:
+  name: skysense
+  kwargs:
+    in_channels: 14
+    num_classes: 2
+    img_size: 128
+    decoder_channels: 256
+    pool_scales:
+    - 1
+    - 2
+    - 3
+    - 6
+    freeze_backbone: false
+    pretrained_backbone_path: pretrained_weight/skysense_model_backbone_hr.pth
+dataset:
+  name: l4s
+  train:
+    dataset_path: data/landslides/Landslide4Sense
+    data_list_path: data/landslides/Landslide4Sense/train.txt
+    crop_size: null
+    split: train
+  val:
+    dataset_path: data/landslides/Landslide4Sense
+    data_list_path: data/landslides/Landslide4Sense/val.txt
+    crop_size: null
+    split: val
+  test:
+    dataset_path: data/landslides/Landslide4Sense
+    data_list_path: data/landslides/Landslide4Sense/test.txt
+    crop_size: null
+    split: test
+augmentation:
+  train: {}
+  val: {}
+optimizer:
+  name: AdamW
+  learning_rate: 5.0e-05
+  weight_decay: 0.01
+scheduler:
+  name: StepLR
+  step_size: 2000
+  gamma: 0.8
+training:
+  num_epochs: 150
+  train_batch_size: 4
+  eval_batch_size: 4
+  num_workers: 16
+  eval_interval: 300
+output_dir: ./results/l4s/seg_skysense

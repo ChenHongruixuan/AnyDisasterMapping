@@ -1,0 +1,156 @@
+task: cd
+num_classes: 5
+ignore_index: 255
+seed: 42
+model:
+  name: mask2former
+  kwargs:
+    backbone: facebook/mask2former-swin-base-ade-semantic
+    pretrained_backbone: true
+    in_channels: 14
+    num_classes: 5
+model_has_builtin_loss: true
+dataset:
+  name: satellite_burned_area
+  train:
+    dataset_path: data/wildfire/satellite_burned_area
+    data_list_path: data/wildfire/satellite_burned_area/train.txt
+    data_type: s2_s1
+    split: train
+    mask_intervals: &id001
+    - - 0
+      - 36
+    - - 37
+      - 100
+    - - 101
+      - 164
+    - - 165
+      - 254
+    - - 255
+      - 255
+  val:
+    dataset_path: data/wildfire/satellite_burned_area
+    data_list_path: data/wildfire/satellite_burned_area/val.txt
+    data_type: s2_s1
+    split: val
+    mask_intervals: *id001
+  test:
+    dataset_path: data/wildfire/satellite_burned_area
+    data_list_path: data/wildfire/satellite_burned_area/test.txt
+    data_type: s2_s1
+    split: test
+    mask_intervals: *id001
+augmentation:
+  train:
+    PadIfNeeded:
+      min_height: 512
+      min_width: 512
+      border_mode: 0
+      value: 0
+      p: 1.0
+    RandomCrop:
+      height: 512
+      width: 512
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    Normalize:
+      pre:
+        mean:
+        - 0.0527
+        - 0.0618
+        - 0.0838
+        - 0.0928
+        - 0.1312
+        - 0.2042
+        - 0.2292
+        - 0.24
+        - 0.2522
+        - 0.2556
+        - 0.2208
+        - 0.1485
+        std:
+        - 0.069
+        - 0.0716
+        - 0.0747
+        - 0.0889
+        - 0.0919
+        - 0.1076
+        - 0.1186
+        - 0.125
+        - 0.1271
+        - 0.1436
+        - 0.1196
+        - 0.0942
+        max_pixel_value: 1.0
+      post:
+        mean:
+        - 0.1312
+        - 0.0647
+        std:
+        - 0.238
+        - 0.1094
+        max_pixel_value: 1.0
+  val:
+    Normalize:
+      pre:
+        mean:
+        - 0.0527
+        - 0.0618
+        - 0.0838
+        - 0.0928
+        - 0.1312
+        - 0.2042
+        - 0.2292
+        - 0.24
+        - 0.2522
+        - 0.2556
+        - 0.2208
+        - 0.1485
+        std:
+        - 0.069
+        - 0.0716
+        - 0.0747
+        - 0.0889
+        - 0.0919
+        - 0.1076
+        - 0.1186
+        - 0.125
+        - 0.1271
+        - 0.1436
+        - 0.1196
+        - 0.0942
+        max_pixel_value: 1.0
+      post:
+        mean:
+        - 0.1312
+        - 0.0647
+        std:
+        - 0.238
+        - 0.1094
+        max_pixel_value: 1.0
+optimizer:
+  name: AdamW
+  learning_rate: 0.0001
+  enc_lr_weight: 0.1
+scheduler:
+  name: WarmUpPolyLR
+  kwargs:
+    lr_power: 0.9
+  step_mode: iteration
+loss:
+  use_dice: true
+  dice_weight: 1.0
+training:
+  num_epochs: 100
+  train_batch_size: 8
+  eval_batch_size: 1
+  num_workers: 16
+  metric_for_best_model: mIoU
+output_dir: ./results/wildfire/satellite_burned_area_s2_s1/cd_mask2former_b
+inference:
+  sliding_kernel: 512
+  sliding_stride: 256

@@ -1,0 +1,66 @@
+task: seg
+num_classes: 3
+ignore_index: 255
+seed: 42
+model:
+  name: deeplabv3p
+  kwargs:
+    in_channels: 6
+    num_classes: 3
+    backbone: resnet101
+dataset:
+  name: kurosiwo
+  input:
+    channels:
+    - pre1_vv
+    - pre1_vh
+    - pre2_vv
+    - pre2_vh
+    - post_vv
+    - post_vh
+  train:
+    dataset_path: data/flood/kurosiwo
+    data_list_path: data/flood/kurosiwo/train.txt
+    split: train
+  val:
+    dataset_path: data/flood/kurosiwo
+    data_list_path: data/flood/kurosiwo/validation.txt
+    split: val
+  test:
+    dataset_path: data/flood/kurosiwo
+    data_list_path: data/flood/kurosiwo/test.txt
+    split: test
+augmentation:
+  train:
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    RandomCrop:
+      height: 224
+      width: 224
+  val:
+    CenterCrop:
+      height: 224
+      width: 224
+optimizer:
+  name: AdamW
+  learning_rate: 0.0001
+  weight_decay: 0.005
+scheduler:
+  name: CosineAnnealingLR
+  step_mode: epoch
+  kwargs:
+    T_max: 100
+loss:
+  use_lovasz: false
+  lovasz_weight: 0.75
+training:
+  num_epochs: 100
+  train_batch_size: 16
+  eval_batch_size: 1
+  num_workers: 4
+  metric_for_best_model: mIoU
+output_dir: ./results/flood/kurosiwo/seg_deeplabv3plus_resnet101

@@ -1,0 +1,83 @@
+task: seg
+num_classes: 11
+ignore_index: 255
+seed: 42
+model:
+  name: segformer
+  kwargs:
+    backbone: mit_b2
+    num_classes: 11
+    embedding_dim: 256
+    pretrained_weight: pretrained_weight/mit_b2.pth
+    in_channels: 3
+dataset:
+  name: rescuenet
+  train:
+    dataset_path: data/infra_damage/rescuenet/train_crop
+    data_list_path: data/infra_damage/rescuenet/train_crop_tiles.txt
+    crop_size: 512
+    split: train
+  val:
+    dataset_path: data/infra_damage/rescuenet/val_crop
+    data_list_path: data/infra_damage/rescuenet/val_crop_tiles.txt
+    crop_size: null
+    split: val
+  test:
+    dataset_path: data/infra_damage/rescuenet/test_crop
+    data_list_path: data/infra_damage/rescuenet/test_crop_tiles.txt
+    crop_size: null
+    split: test
+augmentation:
+  train:
+    SmartCrop:
+      crop_size: 512
+      cat_max_ratio: 0.75
+      max_retry: 50
+      ignore_index: 255
+    HorizontalFlip:
+      p: 0.5
+    VerticalFlip:
+      p: 0.5
+    RandomRotate90:
+      p: 1.0
+    Normalize:
+      mean:
+      - 123.675
+      - 116.28
+      - 103.53
+      std:
+      - 58.395
+      - 57.12
+      - 57.375
+      max_pixel_value: 1.0
+  val:
+    Normalize:
+      mean:
+      - 123.675
+      - 116.28
+      - 103.53
+      std:
+      - 58.395
+      - 57.12
+      - 57.375
+      max_pixel_value: 1.0
+optimizer:
+  name: AdamW
+  learning_rate: 6.0e-05
+  weight_decay: 0.01
+scheduler:
+  name: null
+loss:
+  use_lovasz: true
+  lovasz_weight: 0.75
+training:
+  num_epochs: 30
+  train_batch_size: 16
+  eval_batch_size: 1
+  num_workers: 16
+  eval_interval: 2000
+output_dir: ./results/rescuenet/segformer_b2
+inference:
+  sliding_kernel: 512
+  sliding_stride: 256
+  sliding_batch_size: -1
