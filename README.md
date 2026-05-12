@@ -16,7 +16,7 @@
 <br>
 <sup>13 </sup>University of Twente, <sup>14 </sup>Nanyang Technological University, <sup>15 </sup>Indiana University Indianapolis
 <br>
-<sup>16 </sup>The University of British Columbia, <sup>17 </sup>University of Connecticut, <sup>18 </sup>Université Grenoble Alpes
+<sup>16 </sup>University of Connecticut, <sup>17 </sup>The University of British Columbia, <sup>18 </sup>Université Grenoble Alpes
 
 [**Paper**](https://chrx97.com/Files/EO4DisasterMapping.pdf) | [**Installation**](#installation) | [**Dataset Preparation**](#dataset-preparation) | [**Pretrained Weights**](#pretrained-weights) | [**Quick Start**](#quick-start) | [**Repo Layout**](#repository-layout) 
 
