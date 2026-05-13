@@ -18,7 +18,7 @@
 <br>
 <sup>16 </sup>University of Connecticut, <sup>17 </sup>The University of British Columbia, <sup>18 </sup>Université Grenoble Alpes
 
-[**Paper**](https://chrx97.com/Files/EO4DisasterMapping.pdf) | [**Installation**](#installation) | [**Dataset Preparation**](#dataset-preparation) | [**Pretrained Weights**](#pretrained-weights) | [**Quick Start**](#quick-start) | [**Repo Layout**](#repository-layout) 
+[**Paper**](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6725082) | [**Installation**](#installation) | [**Dataset Preparation**](#dataset-preparation) | [**Pretrained Weights**](#pretrained-weights) | [**Quick Start**](#quick-start) | [**Repo Layout**](#repository-layout) 
 
 </div>
 
@@ -34,7 +34,7 @@
 - [Architecture And Extension](#architecture-and-extension) -->
 
 ## 🔭Overview
-*Any Disaster Mapping* is the official repository for our [review paper in EO-based disaster mapping](https://chrx97.com/Files/EO4DisasterMapping.pdf).
+*Any Disaster Mapping* is the official repository for our [review paper in EO-based disaster mapping](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6725082).
 
 One of our key motivations is that current disaster mapping research is highly fragmented: benchmarks, tasks, and model implementations are often inconsistent across papers, making fair evaluation, reproduction, and further development unnecessarily difficult.
 
